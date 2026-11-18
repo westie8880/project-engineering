@@ -1,61 +1,34 @@
 # Project Engineering
 
-`project-engineering` is a portable Codex Skill for sustained software-project work. It gives an agent a bounded way to understand an unfamiliar repository, preserve project decisions, coordinate specialized Skills, test related paths in batches, and leave an evidence-backed handoff.
-
 ## 中文说明
 
-`project-engineering` 是一个可移植的 Codex 项目工程 Skill，面向持续迭代的软件项目。它帮助智能体在接手陌生仓库时限定检索范围，读取项目规则和当前有效的业务、技术手册，复用既有架构和接口，按批次验证相关功能，并留下可追溯的交接证据。
+### 这是什么
 
-它覆盖项目接入、功能开发、调试、代码审查、测试、配置、发布、部署、迁移和知识交接。它兼容 Java、Go、Vue、React、Python、移动端、H5 以及其他技术栈，不把某个语言、框架、包名或部署拓扑固化成通用规则。它还要求在确认修复后删除被替代的错误尝试，避免旧代码、旧文档和过期方案继续干扰后续工作。
+`project-engineering` 是一个面向长期软件项目的 Codex Skill。它帮助智能体接手陌生项目、理解现有约束、实施代码变更、组织测试、处理发布部署，并把已经确认的业务和技术知识留下来，方便后续对话或其他智能体继续工作。
 
-Skill 通过项目内的业务迭代手册、技术迭代手册和部署索引保存长期知识。当前规则直接进入上下文，历史快照按稳定 ID 和问题范围按需检索。新对话或新智能体先读取项目根规则、手册入口、当前记录和部署记录，再继续任务，减少重复扫描仓库和重复询问基础信息。
+它不绑定 Java、Go、Vue 或某一种工程结构。项目使用什么语言、框架、数据库和部署方式，以项目自身的规则和证据为准。
 
-测试采用批量思路。同一页面或业务链路上尚未验证的相关动作合并覆盖，区分自动化检查、真实联调、浏览器或设备验证与人工验收，不为了验证两个按钮而重复走两遍完全相同的前置流程。发布、部署、验收和回滚证据分别记录，凭据只保存在用户批准的仓库外私密配置中。
+### 处理范围
 
-## English summary
+- **项目接入**：定位项目根目录，读取适用的 `AGENTS.md` 和项目手册入口，识别当前任务涉及的模块。不会扫描无关项目、备份目录、依赖目录或生成文件。
+- **上下文检索**：优先读取当前有效的业务规则、技术规则和部署记录。历史版本使用稳定 ID 按问题查询，避免每次新对话都把整套历史资料重新放进上下文。
+- **跨技术栈开发**：根据项目已有的架构、模块边界和代码约定工作，不预设包名、框架、目录结构或服务器拓扑。
+- **架构与兼容性**：修改前检查数据归属、公开接口、现有调用方、迁移方式和旧行为。新业务数据放在正确的业务模块中，已有接口和调用方在需求未改变时继续可用。
+- **批量测试**：围绕完整业务链组织测试，把同一页面或流程中尚未验证的相关功能合并检查。区分代码检查、自动化测试、真实联调、浏览器或设备验证和人工验收，避免机械地重复已经测过的路径。
+- **长任务管理**：执行前明确目标和边界，实施与复查分开进行。修复得到确认后删除被替代的错误尝试，连续失败时停止无效重试并更换排查方向。
+- **发布与部署**：维护分支、版本、制品、服务、主机、端口、域名、配置来源、迁移、健康检查、备份、回滚和待解决问题的部署索引。上传、代码审查、发布、部署和验收分别记录。
+- **业务与技术手册**：维护互相映射的业务迭代手册和技术迭代手册。当前规则放在活动区，废弃规则保留在历史区，并记录生效范围、替代原因和关联证据。
+- **新智能体交接**：新对话先读取项目说明、索引、适配器、当前手册和部署记录，再开始工作。先报告已识别的项目范围、当前版本和下一步动作，然后承接已有进度。
 
-`project-engineering` is a portable Codex Skill for sustained software-project work. It bounds repository discovery, loads current project rules and handbook evidence, preserves architecture and compatibility contracts, coordinates specialized Skills, tests related paths in batches, removes superseded attempts after confirmed fixes, and leaves an evidence-backed handoff.
+### 适用场景
 
-It covers onboarding, implementation, debugging, review, testing, configuration, release, deployment, migration, documentation, and knowledge transfer. It works across Java, Go, Vue, React, Python, mobile, H5, and other stacks without hard-coding one language, framework, package layout, or deployment topology. Current business and technical rules remain easy to retrieve, while historical snapshots are available by stable ID when an investigation requires them.
+适用于项目接手、功能开发、问题修复、代码审查、测试、配置调整、数据库迁移、版本发布、部署、回滚、文档维护和智能体交接。普通问答、独立文案和与项目无关的单次文件处理不需要使用这个 Skill。
 
-Testing is organized around representative workflows and untested related actions. Automated checks, integration, browser or device verification, and human acceptance are recorded separately. Release, deployment, acceptance, rollback, and credential handling remain auditable and independently controlled.
+### 工作方式
 
-## What it handles / 处理范围
+入口文件是 [`SKILL.md`](SKILL.md)。它会根据任务类型加载所需的参考规则，而不是每次读取所有资料。
 
-- **Project onboarding / 项目接入**. Resolves the project root, reads applicable `AGENTS.md` files, discovers the existing documentation root, and avoids scanning unrelated dependencies, backups, generated output, or other projects. / 解析项目根目录，读取适用的 `AGENTS.md`，发现现有文档根目录，避免扫描无关依赖、备份、生成物和其他项目。
-- **Bounded context retrieval / 有界上下文检索**. Uses a project handbook with stable business and technical IDs, current entries, evidence links, and opt-in historical snapshots. A new conversation can continue from the recorded baseline without rereading the whole repository. / 通过稳定的业务和技术 ID、当前条目、证据链接及按需历史快照读取项目手册，让新对话从已记录基线继续，不必重新读取整个仓库。
-- **Cross-stack development / 跨技术栈开发**. Routes Java, Go, Vue, React, Python, mobile, H5, and other stacks through the repository’s own architecture rules. It does not assume a language, framework, package layout, or deployment platform. / 按仓库自身架构规则处理 Java、Go、Vue、React、Python、移动端、H5 和其他技术栈，不把语言、框架、包结构或部署平台固化为前提。
-- **Architecture and compatibility / 架构与兼容性**. Checks module ownership, public interfaces, data boundaries, existing callers, migrations, and old behavior before changing code. It keeps new business persistence in the owning module and preserves compatibility contracts unless the request changes them. / 修改前检查模块归属、公开接口、数据边界、现有调用方、迁移和旧行为。新业务持久化归属正确模块，除非需求明确改变，否则保留兼容契约。
-- **Batch-oriented testing / 批量化测试**. Groups related untested actions on the same page or workflow, separates automated checks from human acceptance, and records what each layer proves. It avoids reopening a flow merely to repeat an already verified action. / 合并同一页面或业务链路中尚未验证的相关动作，区分自动化检查和人工验收，并记录各层验证范围，避免为了重复已验证动作重新走完整流程。
-- **Long-task control / 长任务控制**. Confirms meaningful plans before execution, separates implementation from review, removes superseded attempts after a confirmed fix, stops repeated failures from turning into unbounded retries, and changes approach when the premise is wrong. / 执行前确认有实际意义的计划，分离实现与审查，修复确认后删除被替代的错误尝试，阻止重复失败变成无限重试，并在前提错误时调整方案。
-- **Release and deployment knowledge / 发布与部署知识**. Maintains a technical deployment index for branches, revisions, artifacts, services, hosts, ports, domains, configuration sources, migrations, health checks, backups, rollback, and unresolved gaps. Upload, review, publish, deployment, and acceptance remain separate events. / 维护分支、版本、制品、服务、主机、端口、域名、配置来源、迁移、健康检查、备份、回滚和未解决问题的部署索引，并分开记录上传、审查、发布、部署和验收事件。
-- **Business and technical handbooks / 业务与技术手册**. Keeps a business iteration view and a technical iteration view linked by stable IDs. Current rules stay easy to retrieve. Superseded rules move to history with effective periods and reasons. / 通过稳定 ID 关联业务迭代视图和技术迭代视图，让当前规则易于检索，被替代规则按生效期间和原因归档到历史记录。
-- **New-agent handoff / 新智能体交接**. A new agent reads the project README, index, adapter, relevant active entries, and deployment records before asking for project basics. It reports the resolved scope and next authorized action, then continues from the evidence already recorded. / 新智能体先读取项目 README、索引、适配器、相关当前条目和部署记录，再询问基础信息，并报告已解析范围和下一步授权动作，依据已有证据继续工作。
-
-## When to use it
-
-Use it for repository or project tasks such as onboarding, feature work, debugging, code review, testing, configuration, release, deployment, migration, documentation, and handoff. It is intentionally not a general writing or standalone-artifact Skill.
-
-## How it works
-
-The entry point is [`SKILL.md`](SKILL.md). It routes only the references needed for the current task.
-
-| Reference | Purpose |
-|---|---|
-| [`agent-handoff.md`](references/agent-handoff.md) | Startup contract for a new conversation, new agent, or compressed context |
-| [`long-task.md`](references/long-task.md) | Plan confirmation, reuse and cleanup, cross-review, batch testing, stop-loss, and recovery |
-| [`development.md`](references/development.md) | General implementation and repository boundaries |
-| [`frontend.md`](references/frontend.md) | Frontend-specific review and verification |
-| [`backend.md`](references/backend.md) | Backend-specific architecture and data rules |
-| [`batch-testing.md`](references/batch-testing.md) | Coverage planning and test evidence |
-| [`handbook-maintenance.md`](references/handbook-maintenance.md) | Two-handbook structure, stable IDs, history, and deployment index |
-| [`project-adapter.md`](references/project-adapter.md) | Compatibility contract with existing projects and other Skills |
-
-The dependency-free [`scripts/handbook.py`](scripts/handbook.py) helper supports bounded index lookup and structural validation. It does not claim that code or business behavior is correct by itself.
-
-## Handbook placement
-
-The two handbooks belong inside the project’s existing documentation root. The preferred layout is:
+项目手册建议放在项目已有的文档根目录下：
 
 ```text
 <project-root>/docs/project-handbook/
@@ -68,31 +41,115 @@ The two handbooks belong inside the project’s existing documentation root. The
 └── evidence/
 ```
 
-If a project already has a shared documentation root, the Skill preserves it and records the resolved path in that project’s README and adapter. Handbook generation is local by default. It does not commit, push, upload, publish, or deploy generated documents unless the user separately authorizes that action.
+手册默认只在本地生成和维护。除非用户单独授权，否则不会自动提交、推送、上传、发布或部署。部署密码、密钥、令牌和连接信息只放在仓库外的私密配置中，手册只记录私密配置的位置和字段名称。
 
-Deployment credentials may be kept in a user-approved private manifest outside the repository. Handbooks record only the manifest path and field names. Passwords, keys, tokens, cookies, and private connection material must not enter this repository.
+### 参考文件
 
-## Installation
+| 文件 | 用途 |
+|---|---|
+| [`agent-handoff.md`](references/agent-handoff.md) | 新对话、新智能体和上下文压缩后的启动流程 |
+| [`long-task.md`](references/long-task.md) | 长任务计划、复查、失败止损、恢复和交接 |
+| [`development.md`](references/development.md) | 通用开发边界和仓库操作规则 |
+| [`frontend.md`](references/frontend.md) | 前端开发、兼容性和界面验证 |
+| [`backend.md`](references/backend.md) | 后端架构、数据边界和接口规则 |
+| [`batch-testing.md`](references/batch-testing.md) | 批量测试范围和测试证据 |
+| [`handbook-maintenance.md`](references/handbook-maintenance.md) | 双手册、稳定 ID、历史归档和部署索引 |
+| [`project-adapter.md`](references/project-adapter.md) | 与现有项目和其他 Skill 的兼容方式 |
 
-Copy this directory to the Codex skills directory, then invoke it explicitly with `$project-engineering` or let normal Skill discovery select it for a project task.
+### 安装与验证
+
+将此目录复制到 Codex 的 Skill 目录：
 
 ```text
 <CODEX_HOME>/skills/project-engineering/
 ```
 
-The Skill keeps automatic invocation enabled. It remains compatible with specialized Skills such as framework, testing, browser, document, and frontend design workflows. Specialized Skills perform tool-specific work. This Skill supplies project scope, evidence retrieval, coverage tracking, cleanup, and handoff.
-
-## Validation
-
-Run the structural validator from the Skill Creator package when available, then inspect the actual references and run any changed helper scripts. The handbook helper can be checked with:
+可以显式使用 `$project-engineering`，也可以让项目任务的 Skill 检索自动选择它。结构检查可以使用 Skill Creator 提供的校验工具。手册辅助脚本支持：
 
 ```text
 python scripts/handbook.py check <path-to-project-handbook> --history
 python scripts/handbook.py lookup <path-to-project-handbook> T.DEPLOY
 ```
 
-These checks validate structure and navigation. They do not replace builds, integration tests, browser or device acceptance, deployment probes, or human confirmation.
+这些命令只能检查文件结构和索引导航，不能代替构建、集成测试、真实联调、设备验收或人工确认。
 
-## Design principles
+### 设计原则
 
-The Skill is intentionally stack-neutral, evidence-oriented, and progressively disclosed. It favors small, reversible changes, current active knowledge, explicit uncertainty, and concrete recovery paths. It does not turn one project’s package names, one failed attempt, or one deployment topology into a universal rule.
+保持技术栈中立，优先使用当前有效证据，逐步加载上下文，明确记录不确定性，优先采用小而可回滚的改动。项目规则应当帮助智能体继续工作，而不是把某个项目的包名、某次失败尝试或某套部署结构变成所有项目的固定规则。
+
+## English documentation
+
+### What this is
+
+`project-engineering` is a Codex Skill for long-lived software projects. It helps an agent take over an unfamiliar repository, understand its constraints, implement changes, organize verification, handle release and deployment work, and preserve confirmed business and technical knowledge for later conversations or agents.
+
+It is independent of Java, Go, Vue, or any particular project layout. The project’s own rules and evidence determine its languages, frameworks, databases, and deployment model.
+
+### What it handles
+
+- **Project onboarding**: Resolves the project root, reads applicable `AGENTS.md` files and handbook entry points, identifies relevant modules, and avoids unrelated projects, backups, dependencies, and generated output.
+- **Context retrieval**: Loads current business rules, technical rules, and deployment records first. Historical versions are retrieved by stable IDs when an investigation needs them, so a new conversation does not reload the entire history.
+- **Cross-stack development**: Follows the project’s existing architecture, module boundaries, and coding conventions without assuming package names, frameworks, directory layouts, or server topology.
+- **Architecture and compatibility**: Checks data ownership, public interfaces, existing callers, migrations, and previous behavior before editing. New persistence belongs in the owning module, and existing contracts remain usable when the request does not change them.
+- **Batch-oriented testing**: Tests representative workflows and groups related unverified actions on the same page or flow. It separates code checks, automated tests, real integration, browser or device verification, and human acceptance.
+- **Long-task control**: Establishes scope before execution and separates implementation from review. After a fix is confirmed, superseded attempts are removed. Repeated failures trigger a change of approach instead of unlimited retries.
+- **Release and deployment**: Maintains an index of branches, revisions, artifacts, services, hosts, ports, domains, configuration sources, migrations, health checks, backups, rollback paths, and unresolved gaps. Upload, review, publication, deployment, and acceptance are recorded separately.
+- **Business and technical handbooks**: Maintains linked business-iteration and technical-iteration handbooks. Current rules stay active, while superseded rules remain in history with scope, replacement reason, and evidence.
+- **New-agent handoff**: A new conversation reads the project overview, indexes, adapter, current handbooks, and deployment records before asking for basics. It reports the resolved scope, current revision, and next action, then continues from recorded progress.
+
+### When to use it
+
+Use it for project onboarding, feature work, debugging, code review, testing, configuration, database migration, release, deployment, rollback, documentation maintenance, and agent handoff. Ordinary questions, standalone prose, and unrelated one-off file tasks do not require this Skill.
+
+### How it works
+
+The entry point is [`SKILL.md`](SKILL.md). It loads only the references required by the current task instead of reading every document on every run.
+
+The recommended handbook layout inside an existing project documentation root is:
+
+```text
+<project-root>/docs/project-handbook/
+├── README.md
+├── index.json
+├── active/
+│   ├── business/business-iteration-handbook.md
+│   └── technical/technical-iteration-handbook.md
+├── history/
+└── evidence/
+```
+
+Handbook generation and maintenance are local by default. The Skill does not commit, push, upload, publish, or deploy them unless the user explicitly authorizes that action. Deployment passwords, keys, tokens, and connection material stay in private configuration outside the repository. Handbooks record only the location and field names.
+
+### Reference files
+
+| File | Purpose |
+|---|---|
+| [`agent-handoff.md`](references/agent-handoff.md) | Startup flow for a new conversation, new agent, or compressed context |
+| [`long-task.md`](references/long-task.md) | Long-task planning, review, stop-loss, recovery, and handoff |
+| [`development.md`](references/development.md) | General development boundaries and repository rules |
+| [`frontend.md`](references/frontend.md) | Frontend development, compatibility, and interface verification |
+| [`backend.md`](references/backend.md) | Backend architecture, data boundaries, and API rules |
+| [`batch-testing.md`](references/batch-testing.md) | Batch test coverage and test evidence |
+| [`handbook-maintenance.md`](references/handbook-maintenance.md) | Two handbooks, stable IDs, history, and deployment indexing |
+| [`project-adapter.md`](references/project-adapter.md) | Compatibility with existing projects and other Skills |
+
+### Installation and validation
+
+Copy this directory to the Codex Skill directory:
+
+```text
+<CODEX_HOME>/skills/project-engineering/
+```
+
+Invoke it explicitly with `$project-engineering`, or let normal Skill discovery select it for project work. Use the validator provided by Skill Creator for structural checks when available. The handbook helper supports:
+
+```text
+python scripts/handbook.py check <path-to-project-handbook> --history
+python scripts/handbook.py lookup <path-to-project-handbook> T.DEPLOY
+```
+
+These commands validate structure and index navigation. They do not replace builds, integration tests, real integration, device acceptance, or human confirmation.
+
+### Design principles
+
+Keep the workflow stack-neutral, evidence-based, and progressively disclosed. Prefer small reversible changes and explicit uncertainty. Project rules should help an agent continue work without turning one project’s package names, one failed attempt, or one deployment topology into a universal rule.
