@@ -88,6 +88,30 @@
 
 **机制**：计划中明确最小变更面、明确不新增的对象和不改变的规则。需要扩大范围时先标记为独立决策，不把推断当成需求。
 
+### 15. 业务约束没有进入工程事实
+
+**问题**：资格、身份、额度、状态、幂等、时间窗口、权限、取消返还和数据归属等约束只存在于聊天或个人记忆中。代码看似完成，实际可能错发权益、重复扣减、跨人串数据或在错误状态下允许操作。
+
+**机制**：每条重要业务约束都要有稳定 ID，并映射到业务手册、代码入口、配置字段、数据库迁移和测试断言。实现前先核对约束，验收时逐条提供证据。
+
+### 16. 编码规范和质量边界缺失
+
+**问题**：不同智能体使用不同命名、分层、异常、事务、日志、注释和文件规模，项目逐渐变得不可读、难审查、难回滚。机械格式化又可能掩盖真实设计问题。
+
+**机制**：把项目编码规范作为可读取的质量边界，约束结构、依赖、文件和方法规模、迁移、接口和日志。规范检查与业务审查分开，避免把格式通过误报成业务完成。
+
+### 17. DDD 领域模型和模块边界被绕过
+
+**问题**：新增实体没有确认领域归属，应用服务直接调用其他模块 Mapper，跨领域逻辑散落在控制器或共享工具中，最终形成隐式耦合和无法维护的数据边界。
+
+**机制**：实现前识别限界上下文、聚合、实体、值对象、领域服务、仓储和应用服务。跨领域只通过公开契约协作，不直接写其他模块数据。新增持久化实体必须有明确归属和依赖方向。
+
+### 18. 设计模式被滥用或重复实现
+
+**问题**：智能体不认识项目既有模式时，会复制一套逻辑或为了“规范”增加无实际价值的工厂、策略、适配器和抽象层，造成调用链变长、职责不清和维护成本上升。
+
+**机制**：先识别现有模式和变化点，再决定复用、扩展或新增抽象。模式选择记录解决的变化、替代方案和影响范围，不以模式名称代替业务设计。
+
 ## English documentation
 
 This document records the recurring engineering problems behind the Skill. It is a design rationale, not a project-specific business rule and not a replacement for the project handbooks.
@@ -175,3 +199,27 @@ This document records the recurring engineering problems behind the Skill. It is
 **Problem**: A narrow request becomes extra ledgers, statuses, confirmation flows, or migrations that were never required.
 
 **Mechanism**: State the smallest change surface and explicit exclusions in the plan. Treat scope expansion as a separate decision instead of converting inference into a requirement.
+
+### 15. Business constraints not represented as engineering facts
+
+**Problem**: Qualification, identity, quota, state, idempotency, time windows, permissions, cancellation return rules, and data ownership remain in chat or personal memory. The code may appear complete while granting incorrectly, decrementing twice, mixing people’s data, or allowing invalid transitions.
+
+**Mechanism**: Give important business constraints stable IDs and map them to the business handbook, code entry points, configuration fields, database migrations, and test assertions. Verify constraints before implementation and provide evidence for each one during acceptance.
+
+### 16. Missing coding standards and quality boundaries
+
+**Problem**: Different agents introduce different naming, layering, exception, transaction, logging, comment, and file-size practices. The project becomes difficult to read, review, and roll back. Mechanical formatting can hide design problems.
+
+**Mechanism**: Treat project coding standards as readable quality boundaries for structure, dependencies, file and method size, migrations, APIs, and logs. Keep standards checks separate from business review so a passing format check is not reported as feature acceptance.
+
+### 17. DDD model and module boundaries bypassed
+
+**Problem**: New entities are added without confirming domain ownership. Application services call another module’s mapper directly, while cross-domain logic spreads through controllers and shared utilities.
+
+**Mechanism**: Identify bounded contexts, aggregates, entities, value objects, domain services, repositories, and application services before editing. Cross-domain work uses public contracts, and new persistence has an explicit owner and dependency direction.
+
+### 18. Design patterns misused or reimplemented
+
+**Problem**: When an agent fails to recognize existing patterns, it copies logic or adds factories, strategies, adapters, and abstraction layers with no real variation point. Call chains grow while responsibilities become less clear.
+
+**Mechanism**: Identify existing patterns and actual variation points before reusing, extending, or introducing an abstraction. Record the change being addressed, alternatives considered, and affected scope. A pattern name never substitutes for business design.
