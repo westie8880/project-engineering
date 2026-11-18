@@ -1,0 +1,4 @@
+interface:
+  display_name: Project Engineering
+  short_description: Cross-stack workflow for repository rules, implementation, batch testing, release, deployment, and handoff
+  default_prompt: Use $project-engineering to inspect project rules and current handbook evidence, route the task, preserve architecture and compatibility, test related paths in batches, remove superseded attempts after confirmation, and record release or deployment evidence.

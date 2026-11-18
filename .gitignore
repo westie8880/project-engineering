@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+*.private
+*.private.*
+*.secret
+*.secret.*
+*.pem
+*.key
+*.env
+*.env.*
