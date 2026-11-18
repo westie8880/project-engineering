@@ -102,15 +102,15 @@
 
 ### 17. DDD 领域模型和模块边界被绕过
 
-**问题**：新增实体没有确认领域归属，应用服务直接调用其他模块 Mapper，跨领域逻辑散落在控制器或共享工具中，最终形成隐式耦合和无法维护的数据边界。
+**问题**：在 AI 辅助开发时代，生成代码的速度提高后，单体项目的主要结构风险往往不再是多人同时编辑同一文件，而是 AI 不断扩大现有文件的职责。新增实体没有确认领域归属，应用服务直接调用其他模块 Mapper，跨领域逻辑散落在控制器或共享工具中，最终形成隐式耦合和无法维护的数据边界。分布式架构仍有部署、隔离和可靠性价值，但其中一部分协同开发收益在小团队与智能体共同维护单体项目时不再是首要矛盾。
 
-**机制**：实现前识别限界上下文、聚合、实体、值对象、领域服务、仓储和应用服务。跨领域只通过公开契约协作，不直接写其他模块数据。新增持久化实体必须有明确归属和依赖方向。
+**机制**：使用 DDD 将单体项目划分为有业务含义的限界上下文和模块边界。实现前识别聚合、实体、值对象、领域服务、仓储和应用服务。跨领域只通过公开契约协作，不直接写其他模块数据。新增持久化实体必须有明确归属和依赖方向。
 
 ### 18. 设计模式被滥用或重复实现
 
-**问题**：智能体不认识项目既有模式时，会复制一套逻辑或为了“规范”增加无实际价值的工厂、策略、适配器和抽象层，造成调用链变长、职责不清和维护成本上升。
+**问题**：AI 喜欢沿着当前文件继续追加逻辑，直到控制器、服务或组件变成巨型文件。智能体不认识项目既有模式时，还会复制一套逻辑，或者为了“规范”增加无实际价值的工厂、策略、适配器和抽象层，造成调用链变长、职责不清和维护成本上升。
 
-**机制**：先识别现有模式和变化点，再决定复用、扩展或新增抽象。模式选择记录解决的变化、替代方案和影响范围，不以模式名称代替业务设计。
+**机制**：把设计模式作为 AI 代码结构的约束工具，而不是装饰性概念。先识别现有模式和真实变化点，再决定复用、扩展或新增抽象，让变化进入策略、工厂、适配器、模板、状态或领域服务等明确位置。模式选择记录解决的变化、替代方案和影响范围，不以模式名称代替业务设计。
 
 ## English documentation
 
@@ -214,12 +214,12 @@ This document records the recurring engineering problems behind the Skill. It is
 
 ### 17. DDD model and module boundaries bypassed
 
-**Problem**: New entities are added without confirming domain ownership. Application services call another module’s mapper directly, while cross-domain logic spreads through controllers and shared utilities.
+**Problem**: In the AI-assisted development era, faster code generation makes module ownership and business boundaries a primary risk in many monolithic systems. New entities are added without confirming domain ownership. Application services call another module’s mapper directly, while cross-domain logic spreads through controllers and shared utilities. Distributed architecture still has operational value, but its team-collaboration benefit is less decisive when a small team and agents maintain one system.
 
-**Mechanism**: Identify bounded contexts, aggregates, entities, value objects, domain services, repositories, and application services before editing. Cross-domain work uses public contracts, and new persistence has an explicit owner and dependency direction.
+**Mechanism**: Use DDD to define business-meaningful bounded contexts and module boundaries in a monolith. Identify aggregates, entities, value objects, domain services, repositories, and application services before editing. Cross-domain work uses public contracts, and new persistence has an explicit owner and dependency direction.
 
 ### 18. Design patterns misused or reimplemented
 
-**Problem**: When an agent fails to recognize existing patterns, it copies logic or adds factories, strategies, adapters, and abstraction layers with no real variation point. Call chains grow while responsibilities become less clear.
+**Problem**: AI tends to keep adding requirements to the current file until a controller, service, or component becomes a large mixed-responsibility file. When an agent fails to recognize existing patterns, it also copies logic or adds factories, strategies, adapters, and abstraction layers with no real variation point. Call chains grow while responsibilities become less clear.
 
-**Mechanism**: Identify existing patterns and actual variation points before reusing, extending, or introducing an abstraction. Record the change being addressed, alternatives considered, and affected scope. A pattern name never substitutes for business design.
+**Mechanism**: Treat design patterns as structural constraints for AI-generated code, not decoration. Identify existing patterns and actual variation points before reusing, extending, or introducing an abstraction, so variation enters a strategy, factory, adapter, template, state, or domain service. Record the change being addressed, alternatives considered, and affected scope. A pattern name never substitutes for business design.
