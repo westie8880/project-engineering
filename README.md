@@ -2,6 +2,24 @@
 
 `project-engineering` is a portable Codex Skill for sustained software-project work. It gives an agent a bounded way to understand an unfamiliar repository, preserve project decisions, coordinate specialized Skills, test related paths in batches, and leave an evidence-backed handoff.
 
+## 中文说明
+
+`project-engineering` 是一个可移植的 Codex 项目工程 Skill，面向持续迭代的软件项目。它帮助智能体在接手陌生仓库时限定检索范围，读取项目规则和当前有效的业务、技术手册，复用既有架构和接口，按批次验证相关功能，并留下可追溯的交接证据。
+
+它覆盖项目接入、功能开发、调试、代码审查、测试、配置、发布、部署、迁移和知识交接。它兼容 Java、Go、Vue、React、Python、移动端、H5 以及其他技术栈，不把某个语言、框架、包名或部署拓扑固化成通用规则。它还要求在确认修复后删除被替代的错误尝试，避免旧代码、旧文档和过期方案继续干扰后续工作。
+
+Skill 通过项目内的业务迭代手册、技术迭代手册和部署索引保存长期知识。当前规则直接进入上下文，历史快照按稳定 ID 和问题范围按需检索。新对话或新智能体先读取项目根规则、手册入口、当前记录和部署记录，再继续任务，减少重复扫描仓库和重复询问基础信息。
+
+测试采用批量思路。同一页面或业务链路上尚未验证的相关动作合并覆盖，区分自动化检查、真实联调、浏览器或设备验证与人工验收，不为了验证两个按钮而重复走两遍完全相同的前置流程。发布、部署、验收和回滚证据分别记录，凭据只保存在用户批准的仓库外私密配置中。
+
+## English summary
+
+`project-engineering` is a portable Codex Skill for sustained software-project work. It bounds repository discovery, loads current project rules and handbook evidence, preserves architecture and compatibility contracts, coordinates specialized Skills, tests related paths in batches, removes superseded attempts after confirmed fixes, and leaves an evidence-backed handoff.
+
+It covers onboarding, implementation, debugging, review, testing, configuration, release, deployment, migration, documentation, and knowledge transfer. It works across Java, Go, Vue, React, Python, mobile, H5, and other stacks without hard-coding one language, framework, package layout, or deployment topology. Current business and technical rules remain easy to retrieve, while historical snapshots are available by stable ID when an investigation requires them.
+
+Testing is organized around representative workflows and untested related actions. Automated checks, integration, browser or device verification, and human acceptance are recorded separately. Release, deployment, acceptance, rollback, and credential handling remain auditable and independently controlled.
+
 ## What it handles
 
 - **Project onboarding**. Resolves the project root, reads applicable `AGENTS.md` files, discovers the existing documentation root, and avoids scanning unrelated dependencies, backups, generated output, or other projects.

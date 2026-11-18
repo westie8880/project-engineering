@@ -1,6 +1,6 @@
 ---
 name: project-engineering
-description: Route sustained repository work from onboarding through implementation, review, testing, release, deployment, and knowledge handoff. It loads project rules and bounded handbook evidence, coordinates compatible specialized Skills, enforces batch-oriented verification, removes superseded attempts after confirmed fixes, and keeps technical and business knowledge aligned across technology stacks. Use for project and repository tasks; ordinary prose and standalone artifacts do not require it.
+description: Route sustained repository work from onboarding through implementation, review, testing, release, deployment, and knowledge handoff. It loads project rules and bounded handbook evidence, coordinates compatible specialized Skills, enforces batch-oriented verification, removes superseded attempts after confirmed fixes, and keeps technical and business knowledge aligned across technology stacks. Use for project and repository tasks; ordinary prose and standalone artifacts do not require it. 中文说明：用于项目接手、开发、测试、发布、部署和知识交接，按当前手册检索证据并保持跨技术栈兼容。
 metadata:
   short-description: Portable project engineering and knowledge workflow
 ---
