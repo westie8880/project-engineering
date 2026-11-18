@@ -2,6 +2,18 @@
 
 这是本 Skill 的核心测试要求：围绕当前主线，以页面/状态为批次覆盖尚未测过的功能，复用前置过程，不能为了同页两个按钮重复完整登录导航流程。
 
+## 为什么采用批量思维
+
+Codex 在不确定覆盖范围时，容易采用过量的防御性测试：反复登录、重复打开同一页面、把已经有证据的流程重新走一遍，最后消耗大量时间，却没有增加新的验证结论。批量测试把目标从“尽可能多点击”改成“用最少的路径证明当前任务需要证明的断言”。
+
+先列出本次任务的功能、状态和风险，再按页面、身份、数据、平台和环境分组。一次到达页面后，合并检查该主线中尚未覆盖的相关动作；已有有效证据的登录、导航和夹具直接复用。无副作用读取先做，写操作随后做，会改变前置条件的取消、删除和清理最后做。只有改动影响了断言，或者证据因版本、角色、环境或状态变化而失效时，才安排针对性复测。
+
+## Batch testing rationale
+
+Codex can react to uncertainty with excessive defensive testing: repeated logins, repeated navigation, and full reruns of flows that already have evidence. This consumes time without producing a new conclusion. Batch testing changes the objective from clicking as much as possible to proving the claims required by the current task with the fewest representative paths.
+
+List the features, states, and risks first, then group them by page, identity, data, platform, and environment. After reaching a page once, cover the related unverified actions on that workflow together and reuse valid login, navigation, and fixture evidence. Run read-only checks before writes, and leave cancellation, deletion, and cleanup until the end because they change the preconditions. Schedule a targeted retest only when a change affects an assertion or when evidence is invalidated by a version, role, environment, or state change.
+
 ## 计划与台账
 
 先列任务内的功能/断言，而非逐按钮行程。台账字段：feature_id、page_or_step、case、身份/数据/环境、代码与配置版本、状态（untested/pass/fail/blocked）、证据、retest_reason。没有证据的口头“测过”不自动算通过。

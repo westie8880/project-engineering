@@ -18,7 +18,7 @@
 - **上下文检索**：优先读取当前有效的业务规则、技术规则和部署记录。历史版本使用稳定 ID 按问题查询，避免每次新对话都把整套历史资料重新放进上下文。
 - **跨技术栈开发**：根据项目已有的架构、模块边界和代码约定工作，不预设包名、框架、目录结构或服务器拓扑。
 - **架构与兼容性**：修改前检查数据归属、公开接口、现有调用方、迁移方式和旧行为。新业务数据放在正确的业务模块中，已有接口和调用方在需求未改变时继续可用。
-- **批量测试**：围绕完整业务链组织测试，把同一页面或流程中尚未验证的相关功能合并检查。区分代码检查、自动化测试、真实联调、浏览器或设备验证和人工验收，避免机械地重复已经测过的路径。
+- **批量测试**：这是为了解决 Codex 容易出现的过量防御性测试。它不把“多测几遍”当成质量，而是先列出当前任务真正需要证明的断言，再按页面、状态、身份、数据和环境分组。到达一个页面后，一次性检查当前主线中尚未覆盖的相关功能，复用相同的登录、导航和夹具；已经有有效证据的前置步骤不再机械重跑。共享状态下先做无副作用检查，再做写操作，最后处理会改变前置条件的取消、删除或清理动作。只有代码、配置、角色、环境、状态或上次证据发生影响时，才针对受影响断言复测。
 - **长任务管理**：执行前明确目标和边界，实施与复查分开进行。修复得到确认后删除被替代的错误尝试，连续失败时停止无效重试并更换排查方向。
 - **发布与部署**：维护分支、版本、制品、服务、主机、端口、域名、配置来源、迁移、健康检查、备份、回滚和待解决问题的部署索引。上传、代码审查、发布、部署和验收分别记录。
 - **业务与技术手册**：维护互相映射的业务迭代手册和技术迭代手册。当前规则放在活动区，废弃规则保留在历史区，并记录生效范围、替代原因和关联证据。
@@ -99,7 +99,7 @@ Software project engineering skill, repository onboarding, code implementation, 
 - **Context retrieval**: Loads current business rules, technical rules, and deployment records first. Historical versions are retrieved by stable IDs when an investigation needs them, so a new conversation does not reload the entire history.
 - **Cross-stack development**: Follows the project’s existing architecture, module boundaries, and coding conventions without assuming package names, frameworks, directory layouts, or server topology.
 - **Architecture and compatibility**: Checks data ownership, public interfaces, existing callers, migrations, and previous behavior before editing. New persistence belongs in the owning module, and existing contracts remain usable when the request does not change them.
-- **Batch-oriented testing**: Tests representative workflows and groups related unverified actions on the same page or flow. It separates code checks, automated tests, real integration, browser or device verification, and human acceptance.
+- **Batch-oriented testing**: This prevents Codex from responding to uncertainty with excessive defensive testing. It first lists the claims the task must prove, then groups them by page, state, identity, data, and environment. Once a workflow reaches a page, related unverified actions on the current path are checked together while valid login, navigation, and fixture evidence is reused. Side-effect-free checks come before writes, and destructive actions such as cancellation, deletion, or cleanup come last. Retesting is limited to claims affected by code, configuration, role, environment, state, or invalidated evidence.
 - **Long-task control**: Establishes scope before execution and separates implementation from review. After a fix is confirmed, superseded attempts are removed. Repeated failures trigger a change of approach instead of unlimited retries.
 - **Release and deployment**: Maintains an index of branches, revisions, artifacts, services, hosts, ports, domains, configuration sources, migrations, health checks, backups, rollback paths, and unresolved gaps. Upload, review, publication, deployment, and acceptance are recorded separately.
 - **Business and technical handbooks**: Maintains linked business-iteration and technical-iteration handbooks. Current rules stay active, while superseded rules remain in history with scope, replacement reason, and evidence.
