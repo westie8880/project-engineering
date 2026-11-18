@@ -34,13 +34,13 @@
 
 **结果**：用最少的代表性路径覆盖最多的新断言，既避免漏测，也避免把已经证明的路径反复重跑。
 
-### 5. 长任务与错误尝试治理
+### 5. 长任务失控与错误尝试治理
 
-**痛点**：长对话中会出现多次修正、错误实现和过期方案并存。用户确认新逻辑后，旧代码如果继续留着，后续智能体可能再次读到并恢复错误行为。
+**痛点**：长期迭代会同时出现多种失控现象：页面和组件各自实现导致样式与交互漂移，固定值散落在多个文件，同一逻辑被重复编写，旧代码和临时路由持续残留，早期方案和过期文档继续被采用。长对话中又会叠加多次修正、错误实现和过期方案，用户确认新逻辑后，后续智能体仍可能读到旧代码并恢复错误行为。
 
-**设计**：把计划、实施、复查、用户确认和清理作为独立阶段。确认修复后删除被替代的尝试，失败达到止损条件时更换排查方向，并保留必要证据。
+**设计**：执行前形成负责人可读的方案，说明复用点、最小改动面、异常处理、兼容性、验收证据、发布授权和回滚路径。把需求拆解、实施、代码复查、分层测试、人工验收和清理作为独立阶段。确认修复后删除被替代的尝试、临时路由、过期文案和无用测试资产；连续失败时重新检查前提，邀请独立复查或更换方案；反复出现的问题沉淀为项目规则。发布前保留最后可用版本和安全恢复入口。
 
-**结果**：项目状态不会随着对话长度积累越来越多相互冲突的实现。
+**结果**：长任务不会只靠当前对话记忆推进。代码、文档、测试、发布和回滚状态各有证据，项目不会随着迭代积累越来越多相互冲突的实现。
 
 ### 6. 发布、部署与环境隔离
 
@@ -94,13 +94,13 @@
 
 **Outcome**: Representative paths prove more new claims without either skipping affected coverage or repeating verified paths.
 
-### 5. Long-task and superseded-attempt control
+### 5. Long-task drift and superseded-attempt control
 
-**Problem**: Long conversations accumulate corrections, failed implementations, and obsolete alternatives. Later agents may read old code and restore a behavior that the user already rejected.
+**Problem**: Long-running iteration accumulates several forms of drift: independent screens and components develop inconsistent styles and interactions, fixed values spread across files, equivalent logic is copied, obsolete code and temporary routes remain, and early plans or stale documentation continue to influence implementation. Long conversations then accumulate corrections, failed implementations, and obsolete alternatives. Later agents may read old code and restore a behavior that the user already rejected.
 
-**Design**: Separate planning, implementation, review, confirmation, and cleanup. Remove superseded attempts after the fix is confirmed, change direction after repeated failure, and retain only useful evidence.
+**Design**: Produce a plan that a responsible owner can review, covering reuse points, the smallest change surface, failure handling, compatibility, acceptance evidence, release authorization, and rollback. Separate requirement decomposition, implementation, code review, layered testing, human acceptance, and cleanup. Remove superseded attempts, temporary routes, stale copy, and unused test assets after confirmation. Recheck the premise or obtain an independent review after repeated failure, turn recurring problems into project rules, and retain a known-good release plus a documented recovery entry.
 
-**Outcome**: Project state does not become a collection of conflicting implementations as the conversation grows.
+**Outcome**: Long tasks do not depend on conversation memory alone. Code, documentation, tests, release state, and rollback state remain evidence-backed, and the project does not accumulate conflicting implementations as iteration continues.
 
 ### 6. Release, deployment, and environment isolation
 
