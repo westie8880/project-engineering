@@ -59,6 +59,7 @@
 | [`backend.md`](references/backend.md) | 后端架构、数据边界和接口规则 |
 | [`batch-testing.md`](references/batch-testing.md) | 批量测试范围和测试证据 |
 | [`design-rationale.md`](references/design-rationale.md) | 各项规则要解决的痛点、设计原因和预期结果 |
+| [`origin-pain-points.md`](references/origin-pain-points.md) | 从长期协作问题整理出的完整设计依据 |
 | [`handbook-maintenance.md`](references/handbook-maintenance.md) | 双手册、稳定 ID、历史归档和部署索引 |
 | [`project-adapter.md`](references/project-adapter.md) | 与现有项目和其他 Skill 的兼容方式 |
 
@@ -142,6 +143,7 @@ Handbook generation and maintenance are local by default. The Skill does not com
 | [`backend.md`](references/backend.md) | Backend architecture, data boundaries, and API rules |
 | [`batch-testing.md`](references/batch-testing.md) | Batch test coverage and test evidence |
 | [`design-rationale.md`](references/design-rationale.md) | Problems addressed, design reasons, and expected outcomes |
+| [`origin-pain-points.md`](references/origin-pain-points.md) | Full design basis derived from recurring collaboration problems |
 | [`handbook-maintenance.md`](references/handbook-maintenance.md) | Two handbooks, stable IDs, history, and deployment indexing |
 | [`project-adapter.md`](references/project-adapter.md) | Compatibility with existing projects and other Skills |
 
