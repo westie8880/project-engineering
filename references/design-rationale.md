@@ -1,0 +1,133 @@
+# 设计动机与解决的问题 / Design rationale and problems addressed
+
+## 中文说明
+
+### 1. 项目接入与有界检索
+
+**痛点**：新对话或新智能体经常重新扫描仓库，读到备份、生成物和历史资料。上下文变长后，当前规则被旧规则冲淡，操作人还要重复解释项目背景。
+
+**设计**：先解析项目根目录、`AGENTS.md`、手册入口、当前分支和部署索引，再按任务读取当前记录。历史资料只在排查对应问题时按稳定 ID取用。
+
+**结果**：减少重复询问和无效扫描，让新对话从项目已经确认的基线继续。
+
+### 2. 跨技术栈兼容
+
+**痛点**：工程规则容易绑定某个项目的 Java 包名、Vue 目录或服务器结构，换项目后无法使用，甚至诱导智能体把示例结构硬套到真实仓库。
+
+**设计**：规则描述能力和边界，不写死语言、框架、包名、目录或部署平台。项目适配器负责映射实际技术栈，专用 Skill 负责具体框架和工具。
+
+**结果**：同一套项目工程流程可以和 Java、Go、Vue、React、Python、移动端、H5 及其他 Skill 协同。
+
+### 3. 架构与兼容性检查
+
+**痛点**：局部修复容易绕过模块边界、重复实现已有逻辑、破坏旧调用方。问题可能暂时消失，后续却出现接口不一致、数据归属错误或迁移遗漏。
+
+**设计**：修改前确认数据归属、调用方、公开接口、迁移和旧行为。新增持久化放进正确模块，已有契约在需求未改变时保持可用。
+
+**结果**：把“能跑”提升为“在现有系统里能长期维护和兼容”。
+
+### 4. 批量测试
+
+**痛点**：Codex 容易用重复登录、重复导航和重复端到端流程应对不确定性，形成过量防御性测试，消耗时间并污染测试数据。
+
+**设计**：按页面、身份、数据、平台和环境建立未测断言清单，复用有效前置证据，合并同一主线上的相关动作。读检查先做，写操作随后做，取消、删除和清理最后做。
+
+**结果**：用最少的代表性路径覆盖最多的新断言，既避免漏测，也避免把已经证明的路径反复重跑。
+
+### 5. 长任务与错误尝试治理
+
+**痛点**：长对话中会出现多次修正、错误实现和过期方案并存。用户确认新逻辑后，旧代码如果继续留着，后续智能体可能再次读到并恢复错误行为。
+
+**设计**：把计划、实施、复查、用户确认和清理作为独立阶段。确认修复后删除被替代的尝试，失败达到止损条件时更换排查方向，并保留必要证据。
+
+**结果**：项目状态不会随着对话长度积累越来越多相互冲突的实现。
+
+### 6. 发布、部署与环境隔离
+
+**痛点**：测试环境、正式环境、分支、域名、端口和服务器容易混淆。只记住“已经部署”无法回答部署了哪一版、连接哪套数据库、如何回滚，以及小程序为什么仍然访问旧服务。
+
+**设计**：为分支、提交、制品、服务、主机、端口、域名、配置来源、数据库、健康检查和回滚路径建立部署索引。上传、发布、部署和验收分别记录，并在执行前核对目标环境。
+
+**结果**：换对话或换操作人后，可以直接恢复环境事实，降低误切正式环境和测试数据串线的风险。
+
+### 7. 业务手册与技术手册
+
+**痛点**：业务方记得的流程、代码实际执行的逻辑和原型说明可能不一致。规则改过多次后，旧版本又会在排查时被误当成当前规则。
+
+**设计**：业务迭代手册记录规则、状态、例外和用户决策。技术迭代手册记录语言、框架、模块、接口、数据和部署映射。两者用稳定 ID 关联，当前规则放活动区，旧规则进入历史区并记录替代原因。
+
+**结果**：日常理解只加载当前快照，排查历史问题时仍能追溯当时规则和证据。
+
+### 8. 新对话与新智能体交接
+
+**痛点**：上下文压缩或更换工具后，智能体不知道已经做过什么、哪些分支是正式环境、哪些改动只在本地，也不知道哪些问题已经验证过。
+
+**设计**：交接入口规定读取顺序，先读项目说明、索引、适配器、当前手册、部署记录和活动证据，再报告范围、版本、环境和下一步动作。
+
+**结果**：新对话接的是项目状态，不是重新听一遍聊天摘要。
+
+## English documentation
+
+### 1. Onboarding and bounded retrieval
+
+**Problem**: New agents often rescan repositories and ingest backups, generated files, and stale history. As context grows, current rules are diluted by obsolete decisions.
+
+**Design**: Resolve the project root, `AGENTS.md`, handbook entry points, branch, and deployment index first. Load historical material only by stable ID when the investigation needs it.
+
+**Outcome**: A new conversation continues from an established baseline instead of repeating discovery and background questions.
+
+### 2. Cross-stack compatibility
+
+**Problem**: Rules tied to one project’s Java packages, Vue directories, or server topology become unusable elsewhere and encourage copying the wrong structure.
+
+**Design**: Describe capabilities and boundaries without hard-coding languages, frameworks, package names, directories, or deployment platforms. Project adapters map the real stack, while specialized Skills handle concrete tools.
+
+**Outcome**: The workflow remains reusable across Java, Go, Vue, React, Python, mobile, H5, and other Skills.
+
+### 3. Architecture and compatibility checks
+
+**Problem**: A local fix can bypass module ownership, duplicate existing logic, or break old callers. The immediate symptom disappears while interface, data, or migration problems remain.
+
+**Design**: Check data ownership, callers, public contracts, migrations, and previous behavior before editing. New persistence belongs to the owning module, and existing contracts remain usable unless the request changes them.
+
+**Outcome**: The change remains maintainable and compatible inside the real system.
+
+### 4. Batch-oriented testing
+
+**Problem**: Codex can answer uncertainty with repeated logins, navigation, and full end-to-end reruns. This creates defensive over-testing, wastes time, and contaminates test data.
+
+**Design**: Track unverified claims by page, identity, data, platform, and environment. Reuse valid prerequisites and combine related actions on the same workflow. Run reads first, writes next, and destructive cleanup last.
+
+**Outcome**: Representative paths prove more new claims without either skipping affected coverage or repeating verified paths.
+
+### 5. Long-task and superseded-attempt control
+
+**Problem**: Long conversations accumulate corrections, failed implementations, and obsolete alternatives. Later agents may read old code and restore a behavior that the user already rejected.
+
+**Design**: Separate planning, implementation, review, confirmation, and cleanup. Remove superseded attempts after the fix is confirmed, change direction after repeated failure, and retain only useful evidence.
+
+**Outcome**: Project state does not become a collection of conflicting implementations as the conversation grows.
+
+### 6. Release, deployment, and environment isolation
+
+**Problem**: Test and production environments, branches, domains, ports, and hosts are easy to confuse. “It was deployed” does not identify the revision, database, rollback path, or reason a client still reaches an old service.
+
+**Design**: Index branches, commits, artifacts, services, hosts, ports, domains, configuration sources, databases, health checks, and rollback paths. Record upload, publication, deployment, and acceptance separately and verify the target before acting.
+
+**Outcome**: Another operator or conversation can recover environment facts without accidentally switching production or mixing test data.
+
+### 7. Business and technical handbooks
+
+**Problem**: Business expectations, code behavior, and prototype text can diverge. After several rule changes, an old version may be mistaken for the active one.
+
+**Design**: The business handbook records rules, states, exceptions, and user decisions. The technical handbook records languages, frameworks, modules, interfaces, data, and deployment mappings. Stable IDs link them. Current rules stay active, while replaced rules move to history with reasons.
+
+**Outcome**: Daily work loads the current snapshot, while investigations can still recover the rule and evidence that existed at the time.
+
+### 8. New-conversation and new-agent handoff
+
+**Problem**: After context compression or a tool change, an agent may not know what was done, which branch is production, which changes are local only, or which paths were already verified.
+
+**Design**: The handoff entry defines a reading order covering the project overview, indexes, adapter, current handbooks, deployment records, and active evidence. The agent reports scope, revision, environment, and next action before continuing.
+
+**Outcome**: A new conversation inherits project state instead of reconstructing it from a chat summary.
