@@ -8,6 +8,10 @@
 
 它不绑定 Java、Go、Vue 或某一种工程结构。项目使用什么语言、框架、数据库和部署方式，以项目自身的规则和证据为准。
 
+### 适用关键词
+
+项目工程 Skill、代码开发、仓库接手、代码审查、问题修复、重构、批量测试、集成测试、版本发布、部署、回滚、数据库迁移、技术迭代手册、业务迭代手册、项目交接、智能体工作流、跨技术栈开发。
+
 ### 处理范围
 
 - **项目接入**：定位项目根目录，读取适用的 `AGENTS.md` 和项目手册入口，识别当前任务涉及的模块。不会扫描无关项目、备份目录、依赖目录或生成文件。
@@ -84,6 +88,10 @@ python scripts/handbook.py lookup <path-to-project-handbook> T.DEPLOY
 `project-engineering` is a Codex Skill for long-lived software projects. It helps an agent take over an unfamiliar repository, understand its constraints, implement changes, organize verification, handle release and deployment work, and preserve confirmed business and technical knowledge for later conversations or agents.
 
 It is independent of Java, Go, Vue, or any particular project layout. The project’s own rules and evidence determine its languages, frameworks, databases, and deployment model.
+
+### Search terms
+
+Software project engineering skill, repository onboarding, code implementation, bug fixing, refactoring, code review, batch testing, integration testing, release management, deployment workflow, rollback, database migration, technical handbook, business handbook, project handoff, agent workflow, cross-stack development.
 
 ### What it handles
 

@@ -1,4 +1,4 @@
 interface:
   display_name: Project Engineering
-  short_description: Cross-stack project workflow / 跨技术栈项目工程工作流
+  short_description: Software project engineering workflow for code, testing, release, deployment, and handoff / 面向开发、测试、发布、部署和交接的跨技术栈项目工程流程
   default_prompt: Use $project-engineering to inspect project rules and current handbook evidence, route the task, preserve architecture and compatibility, test related paths in batches, remove superseded attempts after confirmation, and record release or deployment evidence.

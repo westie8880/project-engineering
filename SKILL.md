@@ -1,6 +1,6 @@
 ---
 name: project-engineering
-description: Route sustained repository work from onboarding through implementation, review, testing, release, deployment, and knowledge handoff. It loads project rules and bounded handbook evidence, coordinates compatible specialized Skills, enforces batch-oriented verification, removes superseded attempts after confirmed fixes, and keeps technical and business knowledge aligned across technology stacks. Use for project and repository tasks; ordinary prose and standalone artifacts do not require it. 中文说明：用于项目接手、开发、测试、发布、部署和知识交接，按当前手册检索证据并保持跨技术栈兼容。
+description: Use for software project engineering and repository work, including project onboarding, code implementation, bug fixing, refactoring, code review, testing, configuration, database migration, release, deployment, rollback, technical documentation, business documentation, and agent handoff. Apply it across Java, Go, Vue, React, Python, mobile, H5, and other stacks when the task needs repository rules, bounded handbook retrieval, architecture compatibility, batch-oriented testing, cleanup of superseded attempts, or release and deployment evidence. 中文说明：适用于项目接手、代码开发、问题修复、重构、审查、测试、配置、迁移、发布、部署、回滚、技术手册、业务手册和智能体交接，不限制语言、框架或目录结构。
 metadata:
   short-description: Portable project engineering and knowledge workflow
 ---
