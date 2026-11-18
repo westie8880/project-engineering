@@ -18,7 +18,8 @@
 - **上下文检索**：优先读取当前有效的业务规则、技术规则和部署记录。历史版本使用稳定 ID 按问题查询，避免每次新对话都把整套历史资料重新放进上下文。
 - **跨技术栈开发**：根据项目已有的架构、模块边界和代码约定工作，不预设包名、框架、目录结构或服务器拓扑。
 - **架构与兼容性**：修改前检查数据归属、公开接口、现有调用方、迁移方式和旧行为。新业务数据放在正确的业务模块中，已有接口和调用方在需求未改变时继续可用。
-- **业务约束落地**：把资格、身份、额度、状态、幂等、时间窗口、权限、数据归属和取消返还等业务约束写成可检索规则，并映射到代码、配置、数据库和测试。业务约束不能只存在于某次聊天或某个人的理解里。
+- **业务约束落地**：把资格、身份、资源配额、状态、幂等、时间窗口、权限、数据归属和撤销规则等业务约束写成可检索规则，并映射到代码、配置、数据库和测试。业务约束不能只存在于某次聊天或某个人的理解里。
+- **最小业务模型**：只为已确认的业务规则增加字段、状态、台账、接口和流程。不得因为“以后可能用到”就堆加没有实际读写路径、验收标准或数据来源的字段，不得用过度设计替代需求确认。
 - **编码规范与质量边界**：遵循项目已有的命名、分层、异常、事务、日志、注释、迁移、接口和文件规模规则。规范用于保证后续修改可读、可审查、可回滚，不以机械格式化代替设计判断。
 - **DDD 领域模型**：在 AI 辅助开发时代，代码生成速度提高后，单体项目最容易失控的地方变成模块边界和业务归属。分布式架构的一部分价值来自多人协同和团队隔离，而在由少量人员和智能体持续维护的单体项目中，模块化本身更直接地承担隔离职责。修改前确认限界上下文、聚合、实体、值对象、领域服务、仓储和模块边界，防止 AI 把不同业务塞进共享层或跨模块直接写数据。
 - **设计模式与复用**：AI 倾向于把新需求继续写进当前文件，直到控制器、服务或组件承担过多职责。设计模式提供可识别的结构约束，让变化点进入策略、工厂、适配器、模板、状态或领域服务等明确位置。先识别项目已有模式，再决定复用、扩展或新增，避免单文件膨胀，也避免为了形式增加没有变化点支撑的抽象层。
@@ -106,7 +107,8 @@ Software project engineering skill, repository onboarding, code implementation, 
 - **Context retrieval**: Loads current business rules, technical rules, and deployment records first. Historical versions are retrieved by stable IDs when an investigation needs them, so a new conversation does not reload the entire history.
 - **Cross-stack development**: Follows the project’s existing architecture, module boundaries, and coding conventions without assuming package names, frameworks, directory layouts, or server topology.
 - **Architecture and compatibility**: Checks data ownership, public interfaces, existing callers, migrations, and previous behavior before editing. New persistence belongs in the owning module, and existing contracts remain usable when the request does not change them.
-- **Business constraints**: Turns qualification, identity, quota, state, idempotency, time windows, permissions, data ownership, and cancellation rules into retrievable constraints mapped to code, configuration, database, and tests. A business rule cannot live only in a chat or in one person’s memory.
+- **Business constraints**: Turns qualification, identity, resource limits, state, idempotency, time windows, permissions, data ownership, and revocation rules into retrievable constraints mapped to code, configuration, database, and tests. A business rule cannot live only in a chat or in one person’s memory.
+- **Minimal business model**: Adds fields, states, ledgers, interfaces, and workflow steps only for confirmed requirements. Do not add speculative fields or processes without a real read/write path, acceptance criterion, or source of truth.
 - **Coding standards and quality boundaries**: Follows the project’s naming, layering, exception, transaction, logging, comment, migration, API, and file-size rules. Standards keep later changes readable, reviewable, and reversible rather than replacing design judgment with mechanical formatting.
 - **DDD domain modeling**: In the AI-assisted development era, faster code generation makes module ownership and business boundaries a primary risk in many monolithic systems. Distributed architecture still has valid operational uses, but its team-collaboration benefit is less decisive when a small team and agents maintain one system. DDD supplies explicit bounded contexts, aggregates, entities, value objects, domain services, repositories, and module boundaries so generated code does not move unrelated business into shared layers or write another module’s data directly.
 - **Design patterns and reuse**: AI tends to keep adding a new requirement to the current file until a controller, service, or component owns too many responsibilities. Design patterns provide recognizable structural constraints that place variation in a strategy, factory, adapter, template, state, or domain service. Recognize existing patterns before extending them, preventing both single-file growth and abstractions that have no real variation point.

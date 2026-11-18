@@ -54,7 +54,7 @@
 
 ### 9. 分支、环境、域名和部署关系混乱
 
-**问题**：测试、UAT、正式分支和服务器经常发生错配。只记录“已部署”无法判断代码版本、服务端口、数据库、域名和小程序配置是否成套，容易出现测试包连接正式服务或正式流量仍指向旧服务。
+**问题**：开发、测试、预发布和生产分支及服务器经常发生错配。只记录“已部署”无法判断代码版本、服务端口、数据库、域名和客户端配置是否成套，容易出现测试客户端连接生产服务或生产流量仍指向旧服务。
 
 **机制**：部署索引记录分支、提交、制品、服务器、服务、端口、域名、配置来源、数据库、健康检查和回滚路径。部署前核对目标，部署后记录验证证据。
 
@@ -66,7 +66,7 @@
 
 ### 11. 测试数据、生产数据和破坏性操作混淆
 
-**问题**：清理测试数据可能误伤正式数据，保留旧测试订单又会影响登录、次数、服务记录和额度判断。用户要求清理时，还需要区分线上、本地、UAT、下游和同步记录。
+**问题**：清理测试数据可能误伤生产数据，保留旧测试记录又会影响身份、资源使用、服务记录和状态判断。执行清理时，还需要区分本地、开发、测试、预发布、生产、下游和同步记录。
 
 **机制**：数据操作记录环境、人员、订单、下游对象、影响范围和恢复方式。初始化只用于空库，已有库走增量处理。删除、清库、清额度和状态回滚都要求明确范围并保留执行证据。
 
@@ -84,13 +84,13 @@
 
 ### 14. 过度设计和需求边界漂移
 
-**问题**：用户只要求绑定调整、配置修正或局部兼容时，智能体可能顺手引入额外台账、状态、确认流程或数据迁移，扩大风险并偏离用户真正需求。
+**问题**：用户只要求局部业务调整、配置修正或兼容处理时，智能体可能顺手引入额外字段、台账、状态、确认流程或数据迁移，扩大风险并偏离用户真正需求。尤其是没有真实数据来源、读写路径和验收标准的“预留设计”，会让业务模型和后续维护成本持续膨胀。
 
-**机制**：计划中明确最小变更面、明确不新增的对象和不改变的规则。需要扩大范围时先标记为独立决策，不把推断当成需求。
+**机制**：计划中明确最小变更面、明确不新增的字段、对象、状态和流程。业务模型只承载已经确认的规则，新增字段必须说明来源、读写方、生命周期和验收方式。没有实际需求支撑的预留字段和流程不得加入。需要扩大范围时先标记为独立决策，不把推断当成需求。
 
 ### 15. 业务约束没有进入工程事实
 
-**问题**：资格、身份、额度、状态、幂等、时间窗口、权限、取消返还和数据归属等约束只存在于聊天或个人记忆中。代码看似完成，实际可能错发权益、重复扣减、跨人串数据或在错误状态下允许操作。
+**问题**：资格、身份、资源配额、状态、幂等、时间窗口、权限、撤销规则和数据归属等约束只存在于聊天或个人记忆中。代码看似完成，实际可能规则不一致、重复产生副作用、跨主体串数据或在错误状态下允许操作。
 
 **机制**：每条重要业务约束都要有稳定 ID，并映射到业务手册、代码入口、配置字段、数据库迁移和测试断言。实现前先核对约束，验收时逐条提供证据。
 
@@ -166,7 +166,7 @@ This document records the recurring engineering problems behind the Skill. It is
 
 ### 9. Confused branches, environments, domains, and deployments
 
-**Problem**: Test, UAT, and production branches or servers are mismatched. “Deployed” does not identify the revision, port, database, domain, or client configuration.
+**Problem**: Development, test, staging, and production branches or servers are mismatched. “Deployed” does not identify the revision, port, database, domain, or client configuration.
 
 **Mechanism**: The deployment index records branch, commit, artifact, host, service, port, domain, configuration source, database, health check, and rollback path. Verify the target before deployment and record evidence afterward.
 
@@ -200,25 +200,31 @@ This document records the recurring engineering problems behind the Skill. It is
 
 **Mechanism**: State the smallest change surface and explicit exclusions in the plan. Treat scope expansion as a separate decision instead of converting inference into a requirement.
 
-### 15. Business constraints not represented as engineering facts
+### 16. Business constraints not represented as engineering facts
 
-**Problem**: Qualification, identity, quota, state, idempotency, time windows, permissions, cancellation return rules, and data ownership remain in chat or personal memory. The code may appear complete while granting incorrectly, decrementing twice, mixing people’s data, or allowing invalid transitions.
+**Problem**: Qualification, identity, resource limits, state, idempotency, time windows, permissions, data ownership, and revocation rules remain in chat or personal memory. The code may appear complete while applying rules inconsistently, duplicating effects, mixing data, or allowing invalid transitions.
 
 **Mechanism**: Give important business constraints stable IDs and map them to the business handbook, code entry points, configuration fields, database migrations, and test assertions. Verify constraints before implementation and provide evidence for each one during acceptance.
 
-### 16. Missing coding standards and quality boundaries
+### 15. Minimal business model and anti-overdesign
+
+**Problem**: An agent may add fields, ledgers, statuses, confirmation workflows, or migrations for hypothetical future needs. These additions have no source of truth, real read/write path, or acceptance criterion, but still become part of the contract that later agents must preserve.
+
+**Mechanism**: Add a field or workflow only when a confirmed rule requires it. The plan must state its source of truth, writers, readers, lifecycle, compatibility impact, and acceptance evidence. Do not create speculative schema, state, or audit concepts to make a local change appear more complete.
+
+### 17. Missing coding standards and quality boundaries
 
 **Problem**: Different agents introduce different naming, layering, exception, transaction, logging, comment, and file-size practices. The project becomes difficult to read, review, and roll back. Mechanical formatting can hide design problems.
 
 **Mechanism**: Treat project coding standards as readable quality boundaries for structure, dependencies, file and method size, migrations, APIs, and logs. Keep standards checks separate from business review so a passing format check is not reported as feature acceptance.
 
-### 17. DDD model and module boundaries bypassed
+### 18. DDD model and module boundaries bypassed
 
 **Problem**: In the AI-assisted development era, faster code generation makes module ownership and business boundaries a primary risk in many monolithic systems. New entities are added without confirming domain ownership. Application services call another module’s mapper directly, while cross-domain logic spreads through controllers and shared utilities. Distributed architecture still has operational value, but its team-collaboration benefit is less decisive when a small team and agents maintain one system.
 
 **Mechanism**: Use DDD to define business-meaningful bounded contexts and module boundaries in a monolith. Identify aggregates, entities, value objects, domain services, repositories, and application services before editing. Cross-domain work uses public contracts, and new persistence has an explicit owner and dependency direction.
 
-### 18. Design patterns misused or reimplemented
+### 19. Design patterns misused or reimplemented
 
 **Problem**: AI tends to keep adding requirements to the current file until a controller, service, or component becomes a large mixed-responsibility file. When an agent fails to recognize existing patterns, it also copies logic or adds factories, strategies, adapters, and abstraction layers with no real variation point. Call chains grow while responsibilities become less clear.
 
