@@ -50,21 +50,15 @@
 
 **结果**：换对话或换操作人后，可以直接恢复环境事实，降低误切正式环境和测试数据串线的风险。
 
-### 7. 业务手册与技术手册
+### 7. 知识索引、业务技术对齐与跨对话交接
 
-**痛点**：业务方记得的流程、代码实际执行的逻辑和原型说明可能不一致。规则改过多次后，旧版本又会在排查时被误当成当前规则。
+**痛点**：代码人员、产品人员和用户对同一业务场景的描述可能不一致，聊天记录、原型、代码和配置也可能互相冲突。对话过长后频繁压缩上下文，换一个对话或智能体时，改动很难一次性迁移，已经修复的问题还可能被旧规则重新带回来。
 
-**设计**：业务迭代手册记录规则、状态、例外和用户决策。技术迭代手册记录语言、框架、模块、接口、数据和部署映射。两者用稳定 ID 关联，当前规则放活动区，旧规则进入历史区并记录替代原因。
+**设计**：建立分层索引，而不是把所有资料堆在 README。入口 README 指向稳定 ID 索引，索引再指向当前业务手册、当前技术手册、部署索引、证据目录和历史快照。业务手册记录规则、状态、例外和用户决策，技术手册记录语言、框架、模块、接口、数据和部署映射。原型、决策、代码、配置、测试和发布证据通过稳定 ID 关联。当前规则放活动区，旧规则进入历史区并记录生效范围、替代原因和证据。
 
-**结果**：日常理解只加载当前快照，排查历史问题时仍能追溯当时规则和证据。
+**交接方式**：上下文压缩或更换工具后，新智能体先读入口 README、索引、适配器、当前快照、部署记录和活动证据，再报告范围、版本、环境和下一步动作。
 
-### 8. 新对话与新智能体交接
-
-**痛点**：上下文压缩或更换工具后，智能体不知道已经做过什么、哪些分支是正式环境、哪些改动只在本地，也不知道哪些问题已经验证过。
-
-**设计**：交接入口规定读取顺序，先读项目说明、索引、适配器、当前手册、部署记录和活动证据，再报告范围、版本、环境和下一步动作。
-
-**结果**：新对话接的是项目状态，不是重新听一遍聊天摘要。
+**结果**：日常理解只加载当前快照，冲突排查可以定位证据，换对话时接的是项目状态而不是一段不完整的聊天摘要。
 
 ## English documentation
 
@@ -116,18 +110,12 @@
 
 **Outcome**: Another operator or conversation can recover environment facts without accidentally switching production or mixing test data.
 
-### 7. Business and technical handbooks
+### 7. Knowledge indexing, business-technical alignment, and handoff
 
-**Problem**: Business expectations, code behavior, and prototype text can diverge. After several rule changes, an old version may be mistaken for the active one.
+**Problem**: Developers, product staff, and users may describe the same business scenario differently. Chat history, prototypes, code, and configuration can conflict. After context compression or a conversation or agent change, a change may be migrated incompletely and a fixed defect may return through an obsolete rule.
 
-**Design**: The business handbook records rules, states, exceptions, and user decisions. The technical handbook records languages, frameworks, modules, interfaces, data, and deployment mappings. Stable IDs link them. Current rules stay active, while replaced rules move to history with reasons.
+**Design**: Use a layered index instead of putting every fact in README. The entry README points to stable-ID indexes, which point to current business and technical handbooks, the deployment index, evidence directories, and historical snapshots. The business handbook records rules, states, exceptions, and user decisions. The technical handbook records languages, frameworks, modules, interfaces, data, and deployment mappings. Prototypes, decisions, code, configuration, tests, and release evidence are linked by stable IDs. Current rules stay active, while replaced rules move to history with scope, replacement reason, and evidence.
 
-**Outcome**: Daily work loads the current snapshot, while investigations can still recover the rule and evidence that existed at the time.
+**Handoff**: After context compression or a tool change, the next agent reads the entry README, indexes, adapter, current snapshots, deployment records, and active evidence before reporting scope, revision, environment, and next action.
 
-### 8. New-conversation and new-agent handoff
-
-**Problem**: After context compression or a tool change, an agent may not know what was done, which branch is production, which changes are local only, or which paths were already verified.
-
-**Design**: The handoff entry defines a reading order covering the project overview, indexes, adapter, current handbooks, deployment records, and active evidence. The agent reports scope, revision, environment, and next action before continuing.
-
-**Outcome**: A new conversation inherits project state instead of reconstructing it from a chat summary.
+**Outcome**: Daily work loads the current snapshot, conflict investigations can locate evidence, and a new conversation inherits project state instead of reconstructing it from an incomplete chat summary.

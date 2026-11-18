@@ -18,11 +18,10 @@
 - **上下文检索**：优先读取当前有效的业务规则、技术规则和部署记录。历史版本使用稳定 ID 按问题查询，避免每次新对话都把整套历史资料重新放进上下文。
 - **跨技术栈开发**：根据项目已有的架构、模块边界和代码约定工作，不预设包名、框架、目录结构或服务器拓扑。
 - **架构与兼容性**：修改前检查数据归属、公开接口、现有调用方、迁移方式和旧行为。新业务数据放在正确的业务模块中，已有接口和调用方在需求未改变时继续可用。
-- **批量测试**：这是为了解决 Codex 容易出现的过量防御性测试。它不把“多测几遍”当成质量，而是先列出当前任务真正需要证明的断言，再按页面、状态、身份、数据和环境分组。到达一个页面后，一次性检查当前主线中尚未覆盖的相关功能，复用相同的登录、导航和夹具；已经有有效证据的前置步骤不再机械重跑。共享状态下先做无副作用检查，再做写操作，最后处理会改变前置条件的取消、删除或清理动作。只有代码、配置、角色、环境、状态或上次证据发生影响时，才针对受影响断言复测。
+- **批量测试**：这是为了解决 AI 测试只会一个点一个点测，以及由此产生的过量防御性测试。到达一个页面后，先以当前主线为范围，扫一遍这个页面所有尚未测过的功能、状态、按钮、异常提示、权限差异和数据展示，不为了验证两个按钮重复登录和导航。已经测过且证据仍有效的前置流程直接复用；只有代码、配置、角色、环境、状态或证据失效时才复测受影响部分。共享状态下先做读取和展示检查，再做写操作，最后做取消、删除和清理。
 - **长任务管理**：执行前明确目标和边界，实施与复查分开进行。修复得到确认后删除被替代的错误尝试，连续失败时停止无效重试并更换排查方向。
 - **发布与部署**：维护分支、版本、制品、服务、主机、端口、域名、配置来源、迁移、健康检查、备份、回滚和待解决问题的部署索引。上传、代码审查、发布、部署和验收分别记录。
-- **业务与技术手册**：维护互相映射的业务迭代手册和技术迭代手册。当前规则放在活动区，废弃规则保留在历史区，并记录生效范围、替代原因和关联证据。
-- **新智能体交接**：新对话先读取项目说明、索引、适配器、当前手册和部署记录，再开始工作。先报告已识别的项目范围、当前版本和下一步动作，然后承接已有进度。
+- **知识索引与跨对话交接**：这是同一套核心机制。项目不是把所有资料堆在 README 里，而是用入口 README、稳定 ID 索引、当前业务手册、当前技术手册、部署索引、证据目录和历史快照组成分层结构。代码人员、产品人员和用户对同一业务场景的描述出现冲突时，按 ID 关联原型、决策、代码、配置、测试和发布证据，明确当前规则、历史规则、事实和待确认项。对话过长发生上下文压缩，或切换到新的对话和智能体时，先读取索引和当前快照，再按任务加载证据，避免改动无法完整迁移、旧规则被误用或已经修复的问题重新出现。
 
 ### 适用场景
 
@@ -44,6 +43,8 @@
 ├── history/
 └── evidence/
 ```
+
+索引不是目录清单，而是检索入口。每条记录使用稳定 ID，记录当前状态、适用范围、来源证据、关联代码或配置、验证版本和历史关系。日常只读取活动区和任务相关证据，历史区仅在冲突排查、回归分析或版本追溯时读取。
 
 手册默认只在本地生成和维护。除非用户单独授权，否则不会自动提交、推送、上传、发布或部署。部署密码、密钥、令牌和连接信息只放在仓库外的私密配置中，手册只记录私密配置的位置和字段名称。
 
@@ -100,11 +101,10 @@ Software project engineering skill, repository onboarding, code implementation, 
 - **Context retrieval**: Loads current business rules, technical rules, and deployment records first. Historical versions are retrieved by stable IDs when an investigation needs them, so a new conversation does not reload the entire history.
 - **Cross-stack development**: Follows the project’s existing architecture, module boundaries, and coding conventions without assuming package names, frameworks, directory layouts, or server topology.
 - **Architecture and compatibility**: Checks data ownership, public interfaces, existing callers, migrations, and previous behavior before editing. New persistence belongs in the owning module, and existing contracts remain usable when the request does not change them.
-- **Batch-oriented testing**: This prevents Codex from responding to uncertainty with excessive defensive testing. It first lists the claims the task must prove, then groups them by page, state, identity, data, and environment. Once a workflow reaches a page, related unverified actions on the current path are checked together while valid login, navigation, and fixture evidence is reused. Side-effect-free checks come before writes, and destructive actions such as cancellation, deletion, or cleanup come last. Retesting is limited to claims affected by code, configuration, role, environment, state, or invalidated evidence.
+- **Batch-oriented testing**: This addresses the tendency of AI testing to verify one point at a time and then compensate with excessive defensive reruns. After reaching a page, the agent scans the whole page within the current workflow for untested features, states, buttons, error messages, permission differences, and data presentation. It does not repeat login and navigation just to verify two buttons. Valid prerequisite evidence is reused. Retesting is limited to claims affected by code, configuration, role, environment, state, or invalidated evidence. Reads come before writes, and cancellation, deletion, and cleanup come last.
 - **Long-task control**: Establishes scope before execution and separates implementation from review. After a fix is confirmed, superseded attempts are removed. Repeated failures trigger a change of approach instead of unlimited retries.
 - **Release and deployment**: Maintains an index of branches, revisions, artifacts, services, hosts, ports, domains, configuration sources, migrations, health checks, backups, rollback paths, and unresolved gaps. Upload, review, publication, deployment, and acceptance are recorded separately.
-- **Business and technical handbooks**: Maintains linked business-iteration and technical-iteration handbooks. Current rules stay active, while superseded rules remain in history with scope, replacement reason, and evidence.
-- **New-agent handoff**: A new conversation reads the project overview, indexes, adapter, current handbooks, and deployment records before asking for basics. It reports the resolved scope, current revision, and next action, then continues from recorded progress.
+- **Knowledge indexing and cross-conversation handoff**: These are one mechanism. The project is not a pile of documents in README. It uses a layered structure of an entry README, stable-ID indexes, current business and technical handbooks, a deployment index, evidence directories, and historical snapshots. When developers, product staff, and users describe the same business scenario differently, stable IDs connect prototypes, decisions, code, configuration, tests, and release evidence so current rules, historical rules, facts, and open questions remain distinguishable. After context compression or a conversation or agent change, the next agent reads the indexes and current snapshots first, then retrieves task-specific evidence. This prevents incomplete migration, stale rules being reused, and fixed defects returning.
 
 ### When to use it
 
@@ -126,6 +126,8 @@ The recommended handbook layout inside an existing project documentation root is
 ├── history/
 └── evidence/
 ```
+
+The index is a retrieval map rather than a directory listing. Each record has a stable ID, current status, scope, source evidence, related code or configuration, verification revision, and history links. Daily work reads the active area and task-relevant evidence. History is loaded for conflict investigation, regression analysis, or version tracing.
 
 Handbook generation and maintenance are local by default. The Skill does not commit, push, upload, publish, or deploy them unless the user explicitly authorizes that action. Deployment passwords, keys, tokens, and connection material stay in private configuration outside the repository. Handbooks record only the location and field names.
 
